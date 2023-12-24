@@ -1,5 +1,4 @@
 ﻿using BackendConsultorioSeguros.DTOs;
-using BackendConsultorioSeguros.Exceptions;
 using BackendConsultorioSeguros.Models;
 using BackendConsultorioSeguros.Servicios.Contrato;
 using BackendConsultorioSeguros.Utility;
@@ -37,7 +36,6 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                             while (await reader.ReadAsync())
                             {
                                 SeguroDto seguro = new SeguroDto();
-                                cmd.Parameters.AddWithValue("NombreSeguro", seguro.NombreSeguro);
                                 seguro.SeguroId = int.Parse(reader["SeguroId"].ToString().Trim());
                                 seguro.NombreSeguro = reader["NombreSeguro"].ToString().Trim();
                                 seguro.CodigoSeguro = reader["CodigoSeguro"].ToString().Trim();

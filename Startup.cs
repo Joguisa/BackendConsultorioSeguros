@@ -40,6 +40,7 @@ namespace BackendConsultorioSeguros
             // inyeccion de dependencias
             services.AddScoped<ISeguroService, SeguroService>();
             services.AddScoped<IClienteService, ClienteService>();
+            services.AddScoped<IAseguradoService, AseguradoService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

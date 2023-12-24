@@ -1,7 +1,6 @@
 ﻿using BackendConsultorioSeguros.DTOs;
 using BackendConsultorioSeguros.Models;
 using BackendConsultorioSeguros.Servicios.Contrato;
-using BackendConsultorioSeguros.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendConsultorioSeguros.Servicios.Implementacion
