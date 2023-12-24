@@ -10,6 +10,7 @@ namespace BackendConsultorioSeguros.Servicios.Contrato
         Task<SeguroDto> GetSeguroByCodigo(string codigoSeguro);
         Task<SeguroDto> CreateSeguro(SeguroDto seguro);
         Task<SeguroDto> UpdateSeguro(int seguroId, SeguroDto seguro);
-        
+        Task<bool> InactivarSeguro(int seguroId);
+
     }
 }

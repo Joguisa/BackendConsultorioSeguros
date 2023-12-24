@@ -1,199 +1,189 @@
 ﻿using BackendConsultorioSeguros.DTOs;
 using BackendConsultorioSeguros.Exceptions;
 using BackendConsultorioSeguros.Helpers;
-using BackendConsultorioSeguros.Models;
 using BackendConsultorioSeguros.Servicios.Contrato;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace BackendConsultorioSeguros.Controllers
 {
+    [Route("api/clientes")]
     [ApiController]
-    [Route("api/seguros")]
-    public class SeguroController : ControllerBase
+    public class ClienteController : ControllerBase
     {
+        private readonly IClienteService _clienteService;
 
-        private readonly ISeguroService _seguroService;
-
-        public SeguroController(ISeguroService seguroService)
+        public ClienteController(IClienteService clienteService)
         {
-            this._seguroService = seguroService;
+            this._clienteService = clienteService;
         }
 
-        [HttpGet(Name = "listaseguros")]
-        public async Task<ActionResult> GetListSeguros()
+        [HttpGet(Name = "Listarclientes")]
+        public async Task<ActionResult> ListarClientes()
         {
             try
             {
-                var listaSeguros = await _seguroService.GetListSeguros();
-
-                if (listaSeguros == null)
+                var listaClientes = await _clienteService.GetListClientes();
+                if (listaClientes == null)
                 {
-                    return NotFound(new ServiceResponse<List<SeguroDto>>()
+                    return NotFound(new ServiceResponse<List<ClienteDto>>()
                     {
                         StatusCode = HttpStatusCode.NotFound,
                         Data = null,
                         Message = "No se encontraron registros"
                     });
                 }
-
-                return Ok(new ServiceResponse<List<SeguroDto>>()
+                return Ok(new ServiceResponse<List<ClienteDto>>()
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = listaSeguros,
+                    Data = listaClientes,
                     Message = "Proceso realizado exitosamente"
                 });
-            }
-            catch (Exception ex) when (ex is ServiceException)
+
+            } catch (Exception ex) when (ex is ServiceException)
             {
-                return BadRequest(new ServiceResponse<List<Seguro>>()
+                return BadRequest(new ServiceResponse<List<ClienteDto>>()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
-
             catch (Exception ex)
             {
-                return BadRequest(new ServiceResponse<List<Seguro>>()
+                return BadRequest(new ServiceResponse<List<ClienteDto>>()
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
+                    StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
         }
 
-        [HttpGet("{seguroId}", Name = "seguroById")]
-        public async Task<ActionResult> GetSeguroById(int seguroId)
+        [HttpGet("{clienteId}", Name = "ObtenerCliente")]
+        public async Task<ActionResult> ObtenerCliente(int clienteId)
         {
             try
             {
-                var seguro = await _seguroService.GetSeguroById(seguroId);
-
-                if (seguro == null)
+                var cliente = await _clienteService.GetClienteById(clienteId);
+                if (cliente == null)
                 {
-                    return NotFound(new ServiceResponse<SeguroDto>()
+                    return NotFound(new ServiceResponse<ClienteDto>()
                     {
                         StatusCode = HttpStatusCode.NotFound,
                         Data = null,
                         Message = "No se encontraron registros"
                     });
                 }
-
-                return Ok(new ServiceResponse<SeguroDto>()
+                return Ok(new ServiceResponse<ClienteDto>()
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = seguro,
+                    Data = cliente,
                     Message = "Proceso realizado exitosamente"
                 });
             }
             catch (Exception ex) when (ex is ServiceException)
             {
-                return BadRequest(new ServiceResponse<SeguroDto>()
+                return BadRequest(new ServiceResponse<ClienteDto>()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
-
             catch (Exception ex)
             {
-                return BadRequest(new ServiceResponse<SeguroDto>()
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Data = null,
-                    Message = ex.Message
-                });
-            }
-        }
-
-
-        [HttpPost(Name = "crearSeguro")]
-        public async Task<ActionResult> CreateSeguro([FromBody] SeguroDto seguro)
-        {
-            try
-            {
-                var seguroCreado = await _seguroService.CreateSeguro(seguro);
-
-                return Ok(new ServiceResponse<SeguroDto>()
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Data = seguroCreado,
-                    Message = "Proceso realizado exitosamente"
-                });
-            }
-            catch (Exception ex) when (ex is ServiceException)
-            {
-                return BadRequest(new ServiceResponse<SeguroDto>()
+                return BadRequest(new ServiceResponse<ClienteDto>()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
-
-            catch (Exception ex)
-            {
-                return BadRequest(new ServiceResponse<SeguroDto>()
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Data = null,
-                    Message = ex.Message
-                });
-            }
         }
 
-        [HttpPut("{seguroId}", Name = "actualizarSeguro")]
-        public async Task<ActionResult> UpdateSeguro(int seguroId, [FromBody] SeguroDto seguro)
+        // POST api/<ClientesController>
+        [HttpPost(Name = "crearCliente")]
+        public async Task<ActionResult> CreateCliente([FromBody] ClienteDto clienteDto)
         {
             try
             {
-                var seguroActualizado = await _seguroService.UpdateSeguro(seguroId, seguro);
-
-                return Ok(new ServiceResponse<SeguroDto>()
+                var clienteCreado = await _clienteService.CreateCliente(clienteDto);
+                return Ok(new ServiceResponse<ClienteDto>()
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = seguroActualizado,
+                    Data = clienteCreado,
                     Message = "Proceso realizado exitosamente"
                 });
             }
             catch (Exception ex) when (ex is ServiceException)
             {
-                return BadRequest(new ServiceResponse<SeguroDto>()
+                return BadRequest(new ServiceResponse<ClienteDto>()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
-
             catch (Exception ex)
             {
-                return BadRequest(new ServiceResponse<SeguroDto>()
+                return BadRequest(new ServiceResponse<ClienteDto>()
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
+                    StatusCode = HttpStatusCode.BadRequest,
                     Data = null,
                     Message = ex.Message
                 });
             }
         }
 
-        [HttpDelete("{seguroId}", Name = "inactivarSeguro")]
-        public async Task<ActionResult> InactivarSeguro(int seguroId)
+        [HttpPut("{clienteId}", Name = "actualizarcliente")]
+        public async Task<ActionResult> PutCliente(int clienteId, [FromBody] ClienteDto clienteDto)
         {
             try
             {
-                var seguroInactivado = await _seguroService.InactivarSeguro(seguroId);
+                await _clienteService.UpdateCliente(clienteId, clienteDto);
+                return Ok(new ServiceResponse<ClienteDto>()
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Data = clienteDto,
+                    Message = "Cliente actualizado con éxito"
+                });
 
+            }
+            catch (Exception ex) when (ex is ServiceException)
+            {
+                return BadRequest(new ServiceResponse<ClienteDto>()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Data = null,
+                    Message = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ServiceResponse<ClienteDto>()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Data = null,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        // DELETE api/<ClientesController>/5
+        [HttpDelete("{seguroId}", Name = "DeleteCliente")]
+        public async Task<ActionResult> DeleteCliente(int seguroId)
+        {
+            try
+            {
+                var clienteInactivado = await _clienteService.InactivarCliente(seguroId);
                 return Ok(new ServiceResponse<bool>()
                 {
                     StatusCode = HttpStatusCode.OK,
-                    Data = seguroInactivado,
-                    Message = "Seguro eliminado con éxito"
+                    Data = clienteInactivado,
+                    Message = "Cliente eliminado con éxito"
                 });
+
             }
             catch (Exception ex) when (ex is ServiceException)
             {
@@ -204,18 +194,15 @@ namespace BackendConsultorioSeguros.Controllers
                     Message = ex.Message
                 });
             }
-
             catch (Exception ex)
             {
                 return BadRequest(new ServiceResponse<bool>()
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
+                    StatusCode = HttpStatusCode.BadRequest,
                     Data = false,
                     Message = ex.Message
                 });
             }
         }
-
     }
-
 }

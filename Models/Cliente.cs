@@ -5,10 +5,6 @@ namespace BackendConsultorioSeguros.Models
 {
     public partial class Cliente
     {
-        public Cliente()
-        {
-            Asegurados = new HashSet<Asegurado>();
-        }
 
         public int ClienteId { get; set; }
         public string Cedula { get; set; } = null!;
@@ -18,6 +14,6 @@ namespace BackendConsultorioSeguros.Models
         public DateTime? FechaCreacion { get; set; }
         public string? Estado { get; set; }
 
-        public virtual ICollection<Asegurado> Asegurados { get; set; }
+        public virtual ICollection<Asegurado> Asegurados { get; set; } = new HashSet<Asegurado>();
     }
 }

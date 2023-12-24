@@ -152,10 +152,78 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
             }
         }
 
-        public Task<SeguroDto> UpdateSeguro(int seguroId, SeguroDto seguro)
+        public async Task<SeguroDto> UpdateSeguro(int seguroId, SeguroDto seguro)
         {
-            throw new NotImplementedException();
+            if (!ValidateFields.Validate(seguro))
+            {
+                throw new ArgumentException("Error de validación. Por favor, verifique los campos.");
+            }
+
+            using (SqlConnection db = new SqlConnection(cadena))
+            {
+                try
+                {
+                    await db.OpenAsync();
+                    using (SqlCommand cmd = new SqlCommand("ActualizarSeguro", db))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@SeguroId", seguroId);
+                        cmd.Parameters.AddWithValue("@NombreSeguro", seguro.NombreSeguro);
+                        cmd.Parameters.AddWithValue("@CodigoSeguro", seguro.CodigoSeguro);
+                        cmd.Parameters.AddWithValue("@SumaAsegurada", seguro.SumaAsegurada);
+                        cmd.Parameters.AddWithValue("@Prima", seguro.Prima);
+
+                        SqlParameter mensajeParam = new SqlParameter("@mensaje", SqlDbType.NVarChar, -1);
+                        mensajeParam.Direction = ParameterDirection.Output;
+                        cmd.Parameters.Add(mensajeParam);
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                        string mensaje = mensajeParam.Value.ToString();
+                        if (!string.IsNullOrEmpty(mensaje) && mensaje != "OK")
+                        {
+                            throw new ApplicationException(mensaje);
+                        }
+                        return seguro;
+                    }
+                }
+                catch (Exception)
+                {
+                    await db.CloseAsync();
+                    throw;
+                }
+            }
+            
         }
 
+        public async Task<bool> InactivarSeguro(int seguroId)
+        {
+            using (SqlConnection db = new SqlConnection(cadena))
+            {
+                try
+                {
+                    await db.OpenAsync();
+                    using (SqlCommand cmd = new SqlCommand("InactivarSeguro", db))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@SeguroId", seguroId);
+
+                        await cmd.ExecuteNonQueryAsync();
+
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                finally
+                {
+                    await db.CloseAsync();
+                }
+            }
+        }
     }
 }
