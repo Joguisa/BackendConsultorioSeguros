@@ -16,13 +16,16 @@ Asegúrese de tener instalados en su sistema:
 ```
 git clone https://github.com/joguisa/backendconsultorioseguros.git
 ```
-2. Migrar la Base de Datos:
+
+2. Crear la base de datos y los respecticos procedimientos que están separados por archivos.
+  
+3. Migrar la Base de Datos:
 
 En el directorio del proyecto, ejecute el siguiente comando para aplicar las migraciones y crear la base de datos:
 ```
 dotnet ef database update
 ```
-3. Ejecutar la aplicación
+4. Ejecutar la aplicación
 
 ## Dependencias
 ### Paquetes NuGet
