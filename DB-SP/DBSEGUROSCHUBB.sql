@@ -1,0 +1,42 @@
+CREATE DATABASE DBSEGUROSCHUBB;
+GO
+
+USE DBSEGUROSCHUBB;
+GO
+
+CREATE TABLE Seguros (
+    SeguroId INT IDENTITY(1,1) PRIMARY KEY,
+    NombreSeguro VARCHAR(60) NOT NULL, 
+    CodigoSeguro VARCHAR(10) NOT NULL,
+    SumaAsegurada DECIMAL(15, 2) NOT NULL,
+    Prima DECIMAL(15, 2) NOT NULL,
+    FechaCreacion DATETIME DEFAULT GETDATE(),
+    Estado VARCHAR(10) DEFAULT 'ACTIVO'
+);
+
+GO
+
+CREATE TABLE Clientes (
+    ClienteId INT IDENTITY(1,1) PRIMARY KEY,
+    Cedula VARCHAR(10) NOT NULL,
+    NombreCliente VARCHAR(100) NOT NULL,
+    Telefono VARCHAR(10) NOT NULL,
+    Edad INT NOT NULL,
+    FechaCreacion DATETIME DEFAULT GETDATE(),
+    Estado VARCHAR(10) DEFAULT 'ACTIVO'
+);
+
+GO
+
+CREATE TABLE Asegurados (
+    AseguradoId INT IDENTITY(1,1) PRIMARY KEY,
+    ClienteId INT NOT NULL,
+    SeguroId INT NOT NULL,
+    Estado VARCHAR(10) DEFAULT 'ACTIVO',
+    FechaCreacion DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(ClienteId),
+    FOREIGN KEY (SeguroId) REFERENCES Seguros(SeguroId),
+    CONSTRAINT AseguradosUnique UNIQUE (ClienteId, SeguroId)
+);
+
+GO
