@@ -1,4 +1,6 @@
-﻿using BackendConsultorioSeguros.Models;
+﻿using BackendConsultorioSeguros.DTOs;
+using BackendConsultorioSeguros.Helpers;
+using BackendConsultorioSeguros.Models;
 using BackendConsultorioSeguros.Servicios.Contrato;
 using BackendConsultorioSeguros.Servicios.Implementacion;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +17,7 @@ namespace BackendConsultorioSeguros
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -38,6 +41,8 @@ namespace BackendConsultorioSeguros
             });
 
             // inyeccion de dependencias
+            services.AddScoped(typeof(DataImportService<TestSeguroDto, Seguro>));
+            services.AddScoped<DataImportDAOService>();
             services.AddScoped<ISeguroService, SeguroService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IAseguradoService, AseguradoService>();

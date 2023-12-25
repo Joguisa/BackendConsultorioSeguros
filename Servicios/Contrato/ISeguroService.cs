@@ -12,5 +12,10 @@ namespace BackendConsultorioSeguros.Servicios.Contrato
         Task<SeguroDto> UpdateSeguro(int seguroId, SeguroDto seguro);
         Task<bool> InactivarSeguro(int seguroId);
 
+        Task<string> ImportarDesdeTxtAsync(Stream fileStream);
+        Task<string> ImportarDesdeExcelAsync(Stream fileStream);
+        Task<string> ADOImportarDesdeTxtAsync(Stream fileStream);
+        Task<string> ADOImportarDesdeExcelAsync(Stream fileStream);
+
     }
 }

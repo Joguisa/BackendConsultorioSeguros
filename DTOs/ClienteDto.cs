@@ -8,6 +8,6 @@
         public string Telefono { get; set; }
         public int Edad { get; set; }
         public DateTime? FechaCreacion { get; set; }
-        public string Estado { get; set; }
+        public string? Estado { get; set; }
     }
 }

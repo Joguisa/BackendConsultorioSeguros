@@ -216,6 +216,64 @@ namespace BackendConsultorioSeguros.Controllers
             }
         }
 
+
+        [HttpPost("TestImportSegurosAsync", Name = "test")]
+        public async Task<IActionResult> TestImportSegurosAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Archivo no proporcionado o vacío.");
+            }
+
+            string resultado;
+            using var stream = file.OpenReadStream();
+            if (file.FileName.EndsWith(".txt"))
+            {
+                resultado = await _seguroService.ImportarDesdeTxtAsync(stream);
+            }
+            else if (file.FileName.EndsWith(".xlsx"))
+            {
+                resultado = await _seguroService.ImportarDesdeExcelAsync(stream);
+            }
+            else
+            {
+                return BadRequest("Formato de archivo no soportado.");
+            }
+
+            if (resultado.StartsWith("Error"))
+            {
+                return BadRequest(resultado);
+            }
+
+            return Ok(resultado);
+        }
+
+        [HttpPost("TestImportADO")]
+        public async Task<IActionResult> TestImportADO(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Archivo no proporcionado o vacío.");
+            }
+
+            string resultado;
+            using var stream = file.OpenReadStream();
+            if (file.FileName.EndsWith(".txt"))
+            {
+                resultado = await _seguroService.ADOImportarDesdeTxtAsync(stream);
+            }
+            else if (file.FileName.EndsWith(".xlsx"))
+            {
+                resultado = await _seguroService.ADOImportarDesdeExcelAsync(stream);
+            }
+            else
+            {
+                return BadRequest("Formato de archivo no soportado.");
+            }
+
+            return resultado.StartsWith("Error") ? BadRequest(resultado) : Ok(resultado);
+        }
+
     }
 
 }

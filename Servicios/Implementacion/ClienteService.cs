@@ -131,6 +131,12 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                     throw new ArgumentException("ID y otros campos requeridos deben ser proporcionados.");
                 }
 
+                // Verificar si ya existe un cliente con la misma cédula
+                if (await ClienteConCedulaExiste(modelo.Cedula))
+                {
+                    throw new InvalidOperationException("Ya existe un cliente con la misma cédula.");
+                }
+
                 var clienteExistente = await _context.Clientes.FindAsync(clienteId);
                 if (clienteExistente == null)
                 {
