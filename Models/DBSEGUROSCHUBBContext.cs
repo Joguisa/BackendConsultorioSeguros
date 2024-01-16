@@ -14,6 +14,7 @@ namespace BackendConsultorioSeguros.Models
         public DBSEGUROSCHUBBContext(DbContextOptions<DBSEGUROSCHUBBContext> options)
             : base(options)
         {
+
         }
 
         public virtual DbSet<Asegurado> Asegurados { get; set; } = null!;

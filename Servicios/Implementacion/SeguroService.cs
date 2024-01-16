@@ -16,14 +16,15 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
         private DBSEGUROSCHUBBContext _context;
         private string cadena;
         private readonly IMapper _mapper;
-        private readonly DataImportService<TestSeguroDto, Seguro> _importService;
+        private readonly DataImportService<SeguroDto, Seguro> _importService;
         private readonly DataImportDAOService _importDAOService;
         public SeguroService(DBSEGUROSCHUBBContext context, IConfiguration configuration, IMapper mapper)
         {
             this._context = context;
             this._configuration = configuration;
-            this.cadena = _configuration["ConnectionStrings:cadenaSQL"];
-            this._importService = new DataImportService<TestSeguroDto, Seguro>(context, mapper);
+            //this.cadena = _configuration["ConnectioAutoMapperProfilesnStrings:cadenaSQL"];
+            this.cadena = _configuration.GetConnectionString("cadenaSQL");
+            this._importService = new DataImportService<SeguroDto, Seguro>(context, mapper);
             this._importDAOService = new DataImportDAOService(configuration);
             this._mapper = mapper;
         }
@@ -264,7 +265,7 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
             return null; // No hay errores de códigos duplicados
         }
 
-        private List<TestSeguroDto> ConvertExcelToSeguroDtoList(Stream fileStream)
+        private List<SeguroDto> ConvertExcelToSeguroDtoList(Stream fileStream)
         {
             using var workbook = new XLWorkbook(fileStream);
             var worksheet = workbook.Worksheet(1); // Asumiendo que los datos están en la primera hoja
@@ -273,9 +274,9 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                             .ToList();
         }
 
-        private async Task<List<TestSeguroDto>> ConvertTxtToSeguroDtoList(Stream fileStream)
+        private async Task<List<SeguroDto>> ConvertTxtToSeguroDtoList(Stream fileStream)
         {
-            var segurosDto = new List<TestSeguroDto>();
+            var segurosDto = new List<SeguroDto>();
             using (var reader = new StreamReader(fileStream))
             {
                 string line;
@@ -307,7 +308,7 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                 return $"Error al importar desde TXT: {ex.Message}";
             }
         }
-        private TestSeguroDto MapLineToSeguroDto(string line)
+        private SeguroDto MapLineToSeguroDto(string line)
         {
             var parts = line.Split(',');
 
@@ -320,12 +321,12 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
             {
                 estado = "I";
             }
-            return new TestSeguroDto
+            return new SeguroDto
             {
                 CodigoSeguro = parts[0],
                 NombreSeguro = parts[1],
                 SumaAsegurada = decimal.Parse(parts[2]),
-                Cuota = decimal.Parse(parts[3]),
+                Prima = decimal.Parse(parts[3]),
                 FechaCreacion = DateTime.Now,
                 Estado = estado
             };
@@ -352,7 +353,7 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
             }
         }
 
-        private TestSeguroDto MapRowToSeguroDto(IXLRow row)
+        private SeguroDto MapRowToSeguroDto(IXLRow row)
         {
             string estado = "I"; // Valor predeterminado
             if (row.Cell(5).IsEmpty())
@@ -367,18 +368,18 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                     estado = estadoValue; // Utiliza el valor si es "A" o "I".
                 }
             }
-            return new TestSeguroDto
+            return new SeguroDto
             {
                 CodigoSeguro = row.Cell(1).Value.ToString(),
                 NombreSeguro = row.Cell(2).Value.ToString(),
                 SumaAsegurada = decimal.Parse(row.Cell(3).Value.ToString()),
-                Cuota = decimal.Parse(row.Cell(4).Value.ToString()),
+                Prima = decimal.Parse(row.Cell(4).Value.ToString()),
                 FechaCreacion = DateTime.Now,
                 Estado = estado
             };
         }
 
-        private IEnumerable<IEnumerable<TestSeguroDto>> ObtenerLotes(IEnumerable<TestSeguroDto> source, int tamañoDelLote)
+        private IEnumerable<IEnumerable<SeguroDto>> ObtenerLotes(IEnumerable<SeguroDto> source, int tamañoDelLote)
         {
             return source.Select((x, i) => new { Index = i, Value = x })
                          .GroupBy(x => x.Index / tamañoDelLote)
@@ -475,7 +476,7 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
             }
         }
 
-        private DataTable ConvertDTOToDataTable(IEnumerable<TestSeguroDto> segurosDto)
+        private DataTable ConvertDTOToDataTable(IEnumerable<SeguroDto> segurosDto)
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("CodigoSeguro", typeof(string)); // VARCHAR(10)
@@ -491,7 +492,7 @@ namespace BackendConsultorioSeguros.Servicios.Implementacion
                     seguro.CodigoSeguro,
                     seguro.NombreSeguro,
                     seguro.SumaAsegurada,
-                    seguro.Cuota,
+                    seguro.Prima,
                     seguro.FechaCreacion == default(DateTime) ? (object)DBNull.Value : seguro.FechaCreacion,
                     seguro.Estado
                 );

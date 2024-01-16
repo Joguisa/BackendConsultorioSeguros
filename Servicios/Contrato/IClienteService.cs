@@ -10,5 +10,12 @@ namespace BackendConsultorioSeguros.Servicios.Contrato
         Task<ClienteDto> CreateCliente(ClienteDto modelo);
         Task<bool> UpdateCliente(int clienteId, ClienteDto modelo);
         Task<bool> InactivarCliente(int clienteId);
+
+        Task<string> ImportarDesdeTxtAsync(Stream fileStream);
+        Task<string> ImportarDesdeExcelAsync(Stream fileStream);
+        Task<string> ADOImportarDesdeTxtAsync(Stream fileStream);
+        Task<string> ADOImportarDesdeExcelAsync(Stream fileStream);
+
+
     }
 }

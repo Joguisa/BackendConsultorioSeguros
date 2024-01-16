@@ -7,8 +7,11 @@
     public class TestClienteDto
     {
         public string Nombre { get; set; }
-        public string Apellido { get; set; }
         public string Identificacion { get; set; }
+        public string Telefono { get; set; }
+        public int Edad { get; set; }
+        public DateTime? FechaCreacion { get; set; }
+        public string? Estado { get; set; }
     }
 
     public class TestSeguroDto

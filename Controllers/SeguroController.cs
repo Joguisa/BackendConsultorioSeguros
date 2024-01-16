@@ -217,7 +217,7 @@ namespace BackendConsultorioSeguros.Controllers
         }
 
 
-        [HttpPost("TestImportSegurosAsync", Name = "test")]
+        [HttpPost("TestImportSegurosAsync", Name = "testseguro")]
         public async Task<IActionResult> TestImportSegurosAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)

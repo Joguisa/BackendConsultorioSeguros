@@ -35,6 +35,7 @@ namespace BackendConsultorioSeguros.Controllers
                 }
                 return Ok(new ServiceResponse<List<ClienteDto>>()
                 {
+
                     StatusCode = HttpStatusCode.OK,
                     Data = listaClientes,
                     Message = "Proceso realizado exitosamente"
@@ -102,7 +103,6 @@ namespace BackendConsultorioSeguros.Controllers
             }
         }
 
-        // POST api/<ClientesController>
         [HttpPost(Name = "crearCliente")]
         public async Task<ActionResult> CreateCliente([FromBody] ClienteDto clienteDto)
         {
@@ -170,7 +170,6 @@ namespace BackendConsultorioSeguros.Controllers
             }
         }
 
-        // DELETE api/<ClientesController>/5
         [HttpDelete("{seguroId}", Name = "DeleteCliente")]
         public async Task<ActionResult> DeleteCliente(int seguroId)
         {
@@ -204,5 +203,64 @@ namespace BackendConsultorioSeguros.Controllers
                 });
             }
         }
+
+
+        [HttpPost("TestImportClienteAsync", Name = "testcliente")]
+        public async Task<IActionResult> TestImportClienteAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Archivo no proporcionado o vacío.");
+            }
+
+            string resultado;
+            using var stream = file.OpenReadStream();
+            if (file.FileName.EndsWith(".txt"))
+            {
+                resultado = await _clienteService.ImportarDesdeTxtAsync(stream);
+            }
+            else if (file.FileName.EndsWith(".xlsx"))
+            {
+                resultado = await _clienteService.ImportarDesdeExcelAsync(stream);
+            }
+            else
+            {
+                return BadRequest("Formato de archivo no soportado.");
+            }
+
+            if (resultado.StartsWith("Error"))
+            {
+                return BadRequest(resultado);
+            }
+
+            return Ok(resultado);
+        }
+
+        [HttpPost("TestImportADO")]
+        public async Task<IActionResult> TestImportADO(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Archivo no proporcionado o vacío.");
+            }
+
+            string resultado;
+            using var stream = file.OpenReadStream();
+            if (file.FileName.EndsWith(".txt"))
+            {
+                resultado = await _clienteService.ADOImportarDesdeTxtAsync(stream);
+            }
+            else if (file.FileName.EndsWith(".xlsx"))
+            {
+                resultado = await _clienteService.ADOImportarDesdeExcelAsync(stream);
+            }
+            else
+            {
+                return BadRequest("Formato de archivo no soportado.");
+            }
+
+            return resultado.StartsWith("Error") ? BadRequest(resultado) : Ok(resultado);
+        }
+
     }
 }
